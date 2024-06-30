@@ -1,24 +1,24 @@
-def dfs_recursive(graph, start, visited=None):
+def dfs(graph, start, visited=None):
     if visited is None:
         visited = set()
-
+    
     visited.add(start)
-    print(start, end=' ')  # Print the visited node
-
+    # Process the node here
+    print(start)
+    
     for neighbor in graph[start]:
         if neighbor not in visited:
-            dfs_recursive(graph, neighbor, visited)
+            dfs(graph, neighbor, visited)
 
-
-# Example usage
+# Example graph representation (adjacency list)
 graph = {
     'A': ['B', 'C'],
-    'B': ['D', 'E'],
-    'C': ['F'],
-    'D': [],
-    'E': ['F'],
-    'F': []
+    'B': ['A', 'D', 'E'],
+    'C': ['A', 'F'],
+    'D': ['B'],
+    'E': ['B', 'F'],
+    'F': ['C', 'E']
 }
 
-print("Recursive DFS traversal starting from node 'A':")
-dfs_recursive(graph, 'A')
+start_node = 'A'
+dfs(graph, start_node)
