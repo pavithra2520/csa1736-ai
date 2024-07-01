@@ -1,59 +1,33 @@
-# Map Coloring CSP using Backtracking
-
-def is_valid_assignment(state, color, assignment, graph):
-    for neighbor in graph[state]:
-        if neighbor in assignment and assignment[neighbor] == color:
+def is_safe(country, color, coloring, adj_list):
+    for neighbor in adj_list[country]:
+        if neighbor in coloring and coloring[neighbor] == color:
             return False
     return True
 
+def map_coloring(country, colors, coloring, adj_list):
+    if country not in coloring:
+        for color in colors:
+            if is_safe(country, color, coloring, adj_list):
+                coloring[country] = color
+                if map_coloring(country + 1, colors, coloring, adj_list):
+                    return True
+                coloring.pop(country)
+        return False
+    else:
+        return map_coloring(country + 1, colors, coloring, adj_list)
 
-def backtracking(assignment, graph, colors):
-    # Check if assignment is complete
-    if len(assignment) == len(graph):
-        return assignment
-
-    # Select the unassigned variable (node) with the minimum remaining values (MRV)
-    unassigned_states = [state for state in graph if state not in assignment]
-    state = min(unassigned_states,
-                key=lambda x: len([color for color in colors if is_valid_assignment(x, color, assignment, graph)]))
-
-    for color in colors:
-        if is_valid_assignment(state, color, assignment, graph):
-            assignment[state] = color  # Assign color
-
-            # Continue to assign for the next state
-            result = backtracking(assignment, graph, colors)
-            if result is not None:
-                return result
-
-            # If not a valid assignment, remove the assignment (backtrack)
-            del assignment[state]
-
-    return None
-
-
-# Example usage
-def map_coloring(graph, colors):
-    assignment = {}
-    return backtracking(assignment, graph, colors)
-
-
-# Define the graph (adjacency list)
-graph = {
-    'WA': ['NT', 'SA'],
-    'NT': ['WA', 'SA', 'Q'],
-    'SA': ['WA', 'NT', 'Q', 'NSW', 'V'],
-    'Q': ['NT', 'SA', 'NSW'],
-    'NSW': ['Q', 'SA', 'V'],
-    'V': ['SA', 'NSW'],
-    'T': []  # Tasmania has no neighbors
-}
-
-# Define possible colors
+# Data for the map and adjacency list
+countries = ['A', 'B', 'C', 'D']
 colors = ['Red', 'Green', 'Blue']
+adj_list = {'A': ['B', 'C'], 'B': ['A', 'C', 'D'], 'C': ['A', 'B', 'D'], 'D': ['B', 'C']}
 
-# Solve the map coloring problem
-solution = map_coloring(graph, colors)
-print("Map Coloring Solution:")
-for state, color in solution.items():
-    print(f"{state}: {color}")
+# Initialize coloring dictionary
+coloring = {}
+
+# Solve the Map Colouring problem
+if map_coloring('A', colors, coloring, adj_list):
+    print("Map Coloring Solution:")
+    for country, color in coloring.items():
+        print(f"Country {country} is colored {color}")
+else:
+    print("No solution found.")
