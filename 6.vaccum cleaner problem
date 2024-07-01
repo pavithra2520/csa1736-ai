@@ -1,38 +1,32 @@
-import random
+def clean_room(room):
+    return room.replace('D', '-')
 
+def vacuum_cleaner_world(initial_room, initial_position):
+    current_room = initial_room
+    position = initial_position
 
-class VacuumCleaner:
-    def __init__(self):
-        self.location = random.choice([(0, 0), (0, 1), (1, 0), (1, 1)])  # Random initial location
-        self.environment = [[random.choice(['Clean', 'Dirty']) for _ in range(2)] for _ in
-                            range(2)]  # Random initial environment
+    print(f"Initial Room State: {current_room}")
 
-    def clean(self):
-        while True:
-            x, y = self.location
-            if self.environment[x][y] == 'Dirty':
-                print(f"Current location: {self.location}, Cleaning...")
-                self.environment[x][y] = 'Clean'
-            else:
-                print(f"Current location: {self.location}, Already clean.")
+    while 'D' in current_room:
+        if current_room[position] == 'D':
+            current_room = clean_room(current_room)
+            print(f"Room Cleaned: {current_room}")
 
-            # Move to the next location in a cyclic manner
-            self.location = (self.location[0], (self.location[1] + 1) % 2)  # Move right
-            if self.location == (x, 0):  # Completed a row, move to the next row
-                self.location = (1 - x, self.location[1])  # Move to the opposite row
-                print("Moving to the next row...")
+        if position == 0:
+            position = 1
+            print("Moving to the right room.")
+        else:
+            position = 0
+            print("Moving to the left room.")
 
-            # Check if all spots are clean
-            if all(all(cell == 'Clean' for cell in row) for row in self.environment):
-                print("All spots are clean. Mission accomplished!")
-                break
+    print("All rooms cleaned.")
 
-            print(f"New location: {self.location}")
-            print("-------------")
+# Test Case 1: Dirt in both rooms, vacuum cleaner in the left room
+initial_room1 = "D-"
+initial_position1 = 0
+vacuum_cleaner_world(initial_room1, initial_position1)
 
-
-# Create an instance of the VacuumCleaner
-vacuum = VacuumCleaner()
-
-# Start cleaning
-vacuum.clean()
+# Test Case 2: Dirt in both rooms, vacuum cleaner in the right room
+initial_room2 = "-D"
+initial_position2 = 1
+vacuum_cleaner_world(initial_room2, initial_position2)
